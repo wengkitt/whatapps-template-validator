@@ -1,5 +1,5 @@
 {
-  "name": "whatsapp-template-checker",
+  "name": "whatsapp-template-validator",
   "version": "0.1.0",
   "private": true,
   "scripts": {

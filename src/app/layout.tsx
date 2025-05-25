@@ -13,33 +13,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WhatsApp Template Checker | Meta Business API Compliance Tool",
+  title: "WhatsApp Template Validator | Meta Business API Compliance Tool",
   description:
-    "Check your WhatsApp Business message templates against Meta's requirements. Get clear feedback on template compliance, component validation, and approval guidelines to avoid rejections.",
+    "Validate your WhatsApp Business message templates against Meta's requirements. Get clear feedback on template compliance, component validation, and approval guidelines to avoid rejections.",
   keywords: [
     "WhatsApp Business",
-    "template checker",
+    "template validator",
     "Meta API",
     "message templates",
     "business messaging",
     "template compliance",
   ],
-  authors: [{ name: "WhatsApp Template Checker" }],
-  creator: "WhatsApp Template Checker",
-  publisher: "WhatsApp Template Checker",
+  authors: [{ name: "WhatsApp Template Validator" }],
+  creator: "WhatsApp Template Validator",
+  publisher: "WhatsApp Template Validator",
   robots: "index, follow",
   openGraph: {
-    title: "WhatsApp Template Checker | Meta Business API Compliance Tool",
+    title: "WhatsApp Template Validator | Meta Business API Compliance Tool",
     description:
-      "Check your WhatsApp Business message templates against Meta's requirements. Get clear feedback on template compliance and avoid rejections.",
+      "Validate your WhatsApp Business message templates against Meta's requirements. Get clear feedback on template compliance and avoid rejections.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "WhatsApp Template Checker",
+    title: "WhatsApp Template Validator",
     description:
-      "Check WhatsApp Business templates against Meta's requirements",
+      "Validate WhatsApp Business templates against Meta's requirements",
   },
   icons: {
     icon: [
