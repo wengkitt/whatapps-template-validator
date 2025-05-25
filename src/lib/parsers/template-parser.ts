@@ -1,4 +1,7 @@
-import { WhatsAppTemplateSchema, WhatsAppTemplate } from "../validators/template-schema";
+import {
+  WhatsAppTemplateSchema,
+  WhatsAppTemplate,
+} from "../validators/template-schema";
 import { ZodError } from "zod";
 
 export interface ParseResult {
@@ -30,10 +33,10 @@ export class TemplateParser {
     try {
       // First, try to parse as JSON
       const rawData = JSON.parse(jsonString);
-      
+
       // Then validate against schema
       const validatedData = WhatsAppTemplateSchema.parse(rawData);
-      
+
       return {
         success: true,
         data: validatedData,
@@ -44,7 +47,7 @@ export class TemplateParser {
         const match = error.message.match(/at position (\d+)/);
         const position = match ? parseInt(match[1]) : 0;
         const { line, column } = this.getLineAndColumn(jsonString, position);
-        
+
         return {
           success: false,
           error: `JSON syntax error: ${error.message}`,
@@ -56,12 +59,16 @@ export class TemplateParser {
         const firstError = error.errors[0];
         return {
           success: false,
-          error: `Validation error: ${firstError.message} at ${firstError.path.join('.')}`,
+          error: `Validation error: ${
+            firstError.message
+          } at ${firstError.path.join(".")}`,
         };
       } else {
         return {
           success: false,
-          error: `Unknown error: ${error instanceof Error ? error.message : String(error)}`,
+          error: `Unknown error: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         };
       }
     }
@@ -70,8 +77,11 @@ export class TemplateParser {
   /**
    * Convert line position to line and column numbers
    */
-  private static getLineAndColumn(text: string, position: number): { line: number; column: number } {
-    const lines = text.substring(0, position).split('\n');
+  private static getLineAndColumn(
+    text: string,
+    position: number
+  ): { line: number; column: number } {
+    const lines = text.substring(0, position).split("\n");
     return {
       line: lines.length,
       column: lines[lines.length - 1].length + 1,
@@ -85,7 +95,7 @@ export class TemplateParser {
     let totalCharacters = 0;
     let variableCount = 0;
     let buttonCount = 0;
-    
+
     const componentCounts = {
       header: 0,
       body: 0,
@@ -100,7 +110,7 @@ export class TemplateParser {
     };
 
     // Analyze each component
-    template.components.forEach(component => {
+    template.components.forEach((component) => {
       switch (component.type) {
         case "HEADER":
           componentCounts.header++;
@@ -110,25 +120,25 @@ export class TemplateParser {
             variableCount += countVariables(text);
           }
           break;
-          
+
         case "BODY":
           componentCounts.body++;
           const bodyText = (component as any).text;
           totalCharacters += bodyText.length;
           variableCount += countVariables(bodyText);
           break;
-          
+
         case "FOOTER":
           componentCounts.footer++;
           const footerText = (component as any).text;
           totalCharacters += footerText.length;
           break;
-          
+
         case "BUTTONS":
           componentCounts.buttons++;
           const buttons = (component as any).buttons || [];
           buttonCount = buttons.length;
-          
+
           buttons.forEach((button: any) => {
             if (button.text) {
               totalCharacters += button.text.length;
@@ -166,9 +176,15 @@ export class TemplateParser {
   /**
    * Extract all variables from template
    */
-  static extractVariables(template: WhatsAppTemplate): Array<{ component: string; variable: string; position: number }> {
-    const variables: Array<{ component: string; variable: string; position: number }> = [];
-    
+  static extractVariables(
+    template: WhatsAppTemplate
+  ): Array<{ component: string; variable: string; position: number }> {
+    const variables: Array<{
+      component: string;
+      variable: string;
+      position: number;
+    }> = [];
+
     const extractFromText = (text: string, componentName: string) => {
       const regex = /\{\{(\d+)\}\}/g;
       let match;
@@ -182,25 +198,32 @@ export class TemplateParser {
     };
 
     template.components.forEach((component, index) => {
-      const componentName = `${component.type.toLowerCase()}[${index}]`;
-      
+      const componentName = `${(
+        component as any
+      ).type.toLowerCase()}[${index}]`;
+
       switch (component.type) {
         case "HEADER":
           if ((component as any).format === "TEXT" && (component as any).text) {
             extractFromText((component as any).text, componentName);
           }
           break;
-          
+
         case "BODY":
           extractFromText((component as any).text, componentName);
           break;
-          
+
         case "BUTTONS":
-          (component as any).buttons?.forEach((button: any, buttonIndex: number) => {
-            if (button.url) {
-              extractFromText(button.url, `${componentName}.buttons[${buttonIndex}].url`);
+          (component as any).buttons?.forEach(
+            (button: any, buttonIndex: number) => {
+              if (button.url) {
+                extractFromText(
+                  button.url,
+                  `${componentName}.buttons[${buttonIndex}].url`
+                );
+              }
             }
-          });
+          );
           break;
       }
     });
@@ -215,7 +238,9 @@ export class TemplateParser {
   /**
    * Generate example template for each category
    */
-  static generateExampleTemplate(category: "MARKETING" | "UTILITY" | "AUTHENTICATION"): WhatsAppTemplate {
+  static generateExampleTemplate(
+    category: "MARKETING" | "UTILITY" | "AUTHENTICATION"
+  ): WhatsAppTemplate {
     const baseTemplate = {
       name: `example_${category.toLowerCase()}_template`,
       language: "en_US",
@@ -315,12 +340,17 @@ export class TemplateParser {
   /**
    * Validate template name format
    */
-  static validateTemplateName(name: string): { valid: boolean; error?: string; suggestion?: string } {
+  static validateTemplateName(name: string): {
+    valid: boolean;
+    error?: string;
+    suggestion?: string;
+  } {
     if (!name) {
       return {
         valid: false,
         error: "Template name is required",
-        suggestion: "Enter a template name using lowercase letters, numbers, and underscores",
+        suggestion:
+          "Enter a template name using lowercase letters, numbers, and underscores",
       };
     }
 
@@ -335,8 +365,10 @@ export class TemplateParser {
     if (!/^[a-z0-9_]+$/.test(name)) {
       return {
         valid: false,
-        error: "Template name can only contain lowercase letters, numbers, and underscores",
-        suggestion: "Use only a-z, 0-9, and _ characters. Example: my_template_name",
+        error:
+          "Template name can only contain lowercase letters, numbers, and underscores",
+        suggestion:
+          "Use only a-z, 0-9, and _ characters. Example: my_template_name",
       };
     }
 

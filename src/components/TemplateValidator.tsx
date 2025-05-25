@@ -51,7 +51,7 @@ export function TemplateValidator() {
 
       // Basic template structure validation
       const errors = [];
-      const warnings = [];
+      const warnings: string[] = [];
 
       if (!parsed.name) {
         errors.push("Template name is required");

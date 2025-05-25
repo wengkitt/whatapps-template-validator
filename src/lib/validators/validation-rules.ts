@@ -1,4 +1,4 @@
-import { WhatsAppTemplate, TemplateComponent } from "./template-schema";
+import { WhatsAppTemplate } from "./template-schema";
 
 export interface ValidationError {
   field: string;
@@ -42,29 +42,54 @@ export class TemplateValidator {
     };
   }
 
-  private addError(field: string, message: string, suggestion?: string, line?: number) {
+  private addError(
+    field: string,
+    message: string,
+    suggestion?: string,
+    line?: number
+  ) {
     this.errors.push({ field, message, suggestion, line, severity: "error" });
   }
 
-  private addWarning(field: string, message: string, suggestion?: string, line?: number) {
-    this.warnings.push({ field, message, suggestion, line, severity: "warning" });
+  private addWarning(
+    field: string,
+    message: string,
+    suggestion?: string,
+    line?: number
+  ) {
+    this.warnings.push({
+      field,
+      message,
+      suggestion,
+      line,
+      severity: "warning",
+    });
   }
 
-  private addInfo(field: string, message: string, suggestion?: string, line?: number) {
+  private addInfo(
+    field: string,
+    message: string,
+    suggestion?: string,
+    line?: number
+  ) {
     this.info.push({ field, message, suggestion, line, severity: "info" });
   }
 
   private validateBasicStructure(template: WhatsAppTemplate) {
     // Check required components
-    const bodyComponent = template.components.find(c => c.type === "BODY");
+    const bodyComponent = template.components.find((c) => c.type === "BODY");
     if (!bodyComponent) {
-      this.addError("components", "Template must have a BODY component", "Add a BODY component with your message text");
+      this.addError(
+        "components",
+        "Template must have a BODY component",
+        "Add a BODY component with your message text"
+      );
     }
 
     // Check component order (recommended)
     const componentOrder = ["HEADER", "BODY", "FOOTER", "BUTTONS"];
     let lastValidIndex = -1;
-    
+
     template.components.forEach((component, index) => {
       const currentIndex = componentOrder.indexOf(component.type);
       if (currentIndex < lastValidIndex) {
@@ -93,12 +118,18 @@ export class TemplateValidator {
   }
 
   private validateAuthenticationTemplate(template: WhatsAppTemplate) {
-    const bodyComponent = template.components.find(c => c.type === "BODY") as any;
-    const buttonComponent = template.components.find(c => c.type === "BUTTONS") as any;
+    const bodyComponent = template.components.find(
+      (c) => c.type === "BODY"
+    ) as any;
+    const buttonComponent = template.components.find(
+      (c) => c.type === "BUTTONS"
+    ) as any;
 
     // Authentication templates should have OTP buttons or preset text
     if (buttonComponent) {
-      const hasOTPButton = buttonComponent.buttons?.some((b: any) => b.type === "OTP");
+      const hasOTPButton = buttonComponent.buttons?.some(
+        (b: any) => b.type === "OTP"
+      );
       if (!hasOTPButton) {
         this.addWarning(
           "buttons",
@@ -109,7 +140,11 @@ export class TemplateValidator {
     }
 
     // Check TTL for authentication templates
-    if (template.messageSendTtlSeconds && (template.messageSendTtlSeconds < 30 || template.messageSendTtlSeconds > 900)) {
+    if (
+      template.messageSendTtlSeconds &&
+      (template.messageSendTtlSeconds < 30 ||
+        template.messageSendTtlSeconds > 900)
+    ) {
       this.addError(
         "messageSendTtlSeconds",
         "Authentication templates TTL must be between 30 seconds and 15 minutes (900 seconds)",
@@ -129,7 +164,11 @@ export class TemplateValidator {
 
   private validateUtilityTemplate(template: WhatsAppTemplate) {
     // Check TTL for utility templates
-    if (template.messageSendTtlSeconds && (template.messageSendTtlSeconds < 30 || template.messageSendTtlSeconds > 43200)) {
+    if (
+      template.messageSendTtlSeconds &&
+      (template.messageSendTtlSeconds < 30 ||
+        template.messageSendTtlSeconds > 43200)
+    ) {
       this.addError(
         "messageSendTtlSeconds",
         "Utility templates TTL must be between 30 seconds and 12 hours (43200 seconds)",
@@ -139,7 +178,9 @@ export class TemplateValidator {
 
     // Check for order status subcategory
     if (template.subCategory === "ORDER_STATUS") {
-      const buttonComponent = template.components.find(c => c.type === "BUTTONS");
+      const buttonComponent = template.components.find(
+        (c) => c.type === "BUTTONS"
+      );
       if (buttonComponent) {
         this.addWarning(
           "buttons",
@@ -152,7 +193,11 @@ export class TemplateValidator {
 
   private validateMarketingTemplate(template: WhatsAppTemplate) {
     // Check TTL for marketing templates
-    if (template.messageSendTtlSeconds && (template.messageSendTtlSeconds < 43200 || template.messageSendTtlSeconds > 2592000)) {
+    if (
+      template.messageSendTtlSeconds &&
+      (template.messageSendTtlSeconds < 43200 ||
+        template.messageSendTtlSeconds > 2592000)
+    ) {
       this.addError(
         "messageSendTtlSeconds",
         "Marketing templates TTL must be between 12 hours (43200 seconds) and 30 days (2592000 seconds)",
@@ -161,7 +206,9 @@ export class TemplateValidator {
     }
 
     // Marketing templates benefit from rich media
-    const headerComponent = template.components.find(c => c.type === "HEADER") as any;
+    const headerComponent = template.components.find(
+      (c) => c.type === "HEADER"
+    ) as any;
     if (!headerComponent) {
       this.addInfo(
         "header",
@@ -171,7 +218,9 @@ export class TemplateValidator {
     }
 
     // Check for call-to-action buttons
-    const buttonComponent = template.components.find(c => c.type === "BUTTONS") as any;
+    const buttonComponent = template.components.find(
+      (c) => c.type === "BUTTONS"
+    ) as any;
     if (!buttonComponent) {
       this.addInfo(
         "buttons",
@@ -182,16 +231,28 @@ export class TemplateValidator {
   }
 
   private validateComponentCombinations(template: WhatsAppTemplate) {
-    const headerComponent = template.components.find(c => c.type === "HEADER") as any;
-    const buttonComponent = template.components.find(c => c.type === "BUTTONS") as any;
+    const headerComponent = template.components.find(
+      (c) => c.type === "HEADER"
+    ) as any;
+    const buttonComponent = template.components.find(
+      (c) => c.type === "BUTTONS"
+    ) as any;
 
     // Validate header format requirements
     if (headerComponent) {
       if (headerComponent.format === "TEXT" && !headerComponent.text) {
-        this.addError("header.text", "TEXT header format requires text content", "Add text or change format");
+        this.addError(
+          "header.text",
+          "TEXT header format requires text content",
+          "Add text or change format"
+        );
       }
-      
-      if (headerComponent.format && headerComponent.format !== "TEXT" && !headerComponent.example?.header_url) {
+
+      if (
+        headerComponent.format &&
+        headerComponent.format !== "TEXT" &&
+        !headerComponent.example?.header_url
+      ) {
         this.addError(
           "header.example.header_url",
           `${headerComponent.format} header format requires example URL`,
@@ -203,15 +264,23 @@ export class TemplateValidator {
     // Validate button requirements for specific button types
     if (buttonComponent) {
       buttonComponent.buttons?.forEach((button: any, index: number) => {
-        if (button.type === "OTP" && button.otp_type === "ONE_TAP" && !button.package_name) {
+        if (
+          button.type === "OTP" &&
+          button.otp_type === "ONE_TAP" &&
+          !button.package_name
+        ) {
           this.addError(
             `buttons[${index}].package_name`,
             "ONE_TAP OTP buttons require package_name",
             "Add your Android app's package name"
           );
         }
-        
-        if (button.type === "OTP" && button.otp_type === "ZERO_TAP" && !button.zero_tap_terms_accepted) {
+
+        if (
+          button.type === "OTP" &&
+          button.otp_type === "ZERO_TAP" &&
+          !button.zero_tap_terms_accepted
+        ) {
           this.addError(
             `buttons[${index}].zero_tap_terms_accepted`,
             "ZERO_TAP OTP buttons require terms acceptance",
@@ -223,45 +292,60 @@ export class TemplateValidator {
   }
 
   private validateVariableUsage(template: WhatsAppTemplate) {
-    template.components.forEach((component, componentIndex) => {
-      if (component.type === "BODY" || (component.type === "HEADER" && (component as any).format === "TEXT")) {
+    template.components.forEach((component, _componentIndex) => {
+      if (
+        component.type === "BODY" ||
+        (component.type === "HEADER" && (component as any).format === "TEXT")
+      ) {
         const text = (component as any).text;
         if (text) {
-          this.validateVariablesInText(text, `${component.type.toLowerCase()}.text`, componentIndex);
+          this.validateVariablesInText(
+            text,
+            `${component.type.toLowerCase()}.text`
+          );
         }
       }
-      
+
       if (component.type === "BUTTONS") {
-        (component as any).buttons?.forEach((button: any, buttonIndex: number) => {
-          if (button.type === "URL" && button.url) {
-            this.validateVariablesInText(button.url, `buttons[${buttonIndex}].url`, componentIndex);
+        (component as any).buttons?.forEach(
+          (button: any, buttonIndex: number) => {
+            if (button.type === "URL" && button.url) {
+              this.validateVariablesInText(
+                button.url,
+                `buttons[${buttonIndex}].url`
+              );
+            }
           }
-        });
+        );
       }
     });
   }
 
-  private validateVariablesInText(text: string, field: string, componentIndex?: number) {
+  private validateVariablesInText(text: string, field: string) {
     const variableRegex = /\{\{(\d+)\}\}/g;
     const matches = Array.from(text.matchAll(variableRegex));
-    
+
     if (matches.length > 0) {
-      const variables = matches.map(match => parseInt(match[1])).sort((a, b) => a - b);
-      
+      const variables = matches
+        .map((match) => parseInt(match[1]))
+        .sort((a, b) => a - b);
+
       // Check for sequential variables starting from 1
       for (let i = 0; i < variables.length; i++) {
         if (variables[i] !== i + 1) {
           this.addError(
             field,
-            `Variables must be sequential starting from {{1}}. Found: {{${variables.join("}}, {{")}}}`,
+            `Variables must be sequential starting from {{1}}. Found: {{${variables.join(
+              "}}, {{"
+            )}}}`,
             `Use variables {{1}}, {{2}}, {{3}}, etc. in sequence`
           );
           break;
         }
       }
-      
+
       // Check for duplicate variables
-      const uniqueVariables = [...new Set(variables)];
+      const uniqueVariables = Array.from(new Set(variables));
       if (uniqueVariables.length !== variables.length) {
         this.addWarning(
           field,
@@ -273,7 +357,7 @@ export class TemplateValidator {
   }
 
   private validateCharacterLimits(template: WhatsAppTemplate) {
-    template.components.forEach((component, index) => {
+    template.components.forEach((component, _index) => {
       switch (component.type) {
         case "HEADER":
           if ((component as any).format === "TEXT" && (component as any).text) {
@@ -287,11 +371,17 @@ export class TemplateValidator {
           this.validateTextLength((component as any).text, 60, `footer.text`);
           break;
         case "BUTTONS":
-          (component as any).buttons?.forEach((button: any, buttonIndex: number) => {
-            if (button.text) {
-              this.validateTextLength(button.text, 25, `buttons[${buttonIndex}].text`);
+          (component as any).buttons?.forEach(
+            (button: any, buttonIndex: number) => {
+              if (button.text) {
+                this.validateTextLength(
+                  button.text,
+                  25,
+                  `buttons[${buttonIndex}].text`
+                );
+              }
             }
-          });
+          );
           break;
       }
     });
@@ -305,7 +395,7 @@ export class TemplateValidator {
         `Reduce text by ${text.length - maxLength} characters`
       );
     }
-    
+
     // Warning for texts approaching the limit
     if (text.length > maxLength * 0.9) {
       this.addWarning(
@@ -317,11 +407,13 @@ export class TemplateValidator {
   }
 
   private validateButtonCombinations(template: WhatsAppTemplate) {
-    const buttonComponent = template.components.find(c => c.type === "BUTTONS") as any;
+    const buttonComponent = template.components.find(
+      (c) => c.type === "BUTTONS"
+    ) as any;
     if (!buttonComponent?.buttons) return;
 
     const buttons = buttonComponent.buttons;
-    
+
     // Count button types
     const buttonCounts = buttons.reduce((counts: any, button: any) => {
       counts[button.type] = (counts[button.type] || 0) + 1;
@@ -330,21 +422,38 @@ export class TemplateValidator {
 
     // Validate button type limits
     if (buttonCounts.PHONE_NUMBER > 1) {
-      this.addError("buttons", "Maximum 1 phone number button allowed", "Remove extra phone number buttons");
+      this.addError(
+        "buttons",
+        "Maximum 1 phone number button allowed",
+        "Remove extra phone number buttons"
+      );
     }
-    
+
     if (buttonCounts.URL > 2) {
-      this.addError("buttons", "Maximum 2 URL buttons allowed", "Remove extra URL buttons");
+      this.addError(
+        "buttons",
+        "Maximum 2 URL buttons allowed",
+        "Remove extra URL buttons"
+      );
     }
-    
+
     if (buttonCounts.COPY_CODE > 1) {
-      this.addError("buttons", "Maximum 1 copy code button allowed", "Remove extra copy code buttons");
+      this.addError(
+        "buttons",
+        "Maximum 1 copy code button allowed",
+        "Remove extra copy code buttons"
+      );
     }
 
     // Validate quick reply button grouping
-    const quickReplyIndices = buttons.map((b: any, i: number) => b.type === "QUICK_REPLY" ? i : -1).filter((i: number) => i !== -1);
+    const quickReplyIndices = buttons
+      .map((b: any, i: number) => (b.type === "QUICK_REPLY" ? i : -1))
+      .filter((i: number) => i !== -1);
     if (quickReplyIndices.length > 0) {
-      const isGrouped = quickReplyIndices.every((index, i) => i === 0 || index === quickReplyIndices[i - 1] + 1);
+      const isGrouped = quickReplyIndices.every(
+        (index: number, i: number) =>
+          i === 0 || index === quickReplyIndices[i - 1] + 1
+      );
       if (!isGrouped) {
         this.addError(
           "buttons",
@@ -356,7 +465,9 @@ export class TemplateValidator {
   }
 
   private validateMediaRequirements(template: WhatsAppTemplate) {
-    const headerComponent = template.components.find(c => c.type === "HEADER") as any;
+    const headerComponent = template.components.find(
+      (c) => c.type === "HEADER"
+    ) as any;
     if (!headerComponent?.format || headerComponent.format === "TEXT") return;
 
     const example = headerComponent.example;
@@ -370,7 +481,7 @@ export class TemplateValidator {
     }
 
     const url = example.header_url[0];
-    
+
     // Validate file extensions
     switch (headerComponent.format) {
       case "IMAGE":
@@ -414,7 +525,7 @@ export class TemplateValidator {
     }
 
     const ttl = template.messageSendTtlSeconds;
-    
+
     // General TTL validation
     if (ttl < 30) {
       this.addError(
@@ -423,7 +534,7 @@ export class TemplateValidator {
         "Set TTL to at least 30 seconds"
       );
     }
-    
+
     if (ttl > 2592000) {
       this.addError(
         "messageSendTtlSeconds",
@@ -434,7 +545,9 @@ export class TemplateValidator {
   }
 }
 
-export const validateTemplate = (template: WhatsAppTemplate): ValidationResult => {
+export const validateTemplate = (
+  template: WhatsAppTemplate
+): ValidationResult => {
   const validator = new TemplateValidator();
   return validator.validate(template);
 };
