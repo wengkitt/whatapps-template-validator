@@ -1,0 +1,39 @@
+{
+  "name": "test_marketing_template",
+  "language": "en_US",
+  "category": "MARKETING",
+  "components": [
+    {
+      "type": "HEADER",
+      "format": "IMAGE",
+      "example": {
+        "header_url": ["https://example.com/image.jpg"]
+      }
+    },
+    {
+      "type": "BODY",
+      "text": "Hi {{1}}, check out our amazing deals! Get {{2}} off your next purchase. Visit our store today!",
+      "example": {
+        "body_text": [["John", "20%"]]
+      }
+    },
+    {
+      "type": "FOOTER",
+      "text": "Limited time offer"
+    },
+    {
+      "type": "BUTTONS",
+      "buttons": [
+        {
+          "type": "URL",
+          "text": "Shop Now",
+          "url": "https://example.com/shop"
+        },
+        {
+          "type": "QUICK_REPLY",
+          "text": "Learn More"
+        }
+      ]
+    }
+  ]
+}
