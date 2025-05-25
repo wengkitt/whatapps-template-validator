@@ -6,11 +6,11 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            WhatsApp Business Template Validator
+            WhatsApp Template Checker
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Validate your WhatsApp Business message templates before submission
-            to Meta. Get detailed feedback and fix issues before they cause
+            Check your WhatsApp Business message templates before submission to
+            Meta. Get detailed feedback and fix issues before they cause
             rejections.
           </p>
         </div>

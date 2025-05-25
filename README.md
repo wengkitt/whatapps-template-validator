@@ -1,6 +1,6 @@
-# WhatsApp Business Template Validator
+# WhatsApp Template Checker
 
-A comprehensive tool for validating WhatsApp Business message templates before submission to Meta. This project solves the critical problem of template rejections by providing detailed validation and actionable feedback.
+A comprehensive tool for checking WhatsApp Business message templates before submission to Meta. This project solves the critical problem of template rejections by providing detailed validation and actionable feedback.
 
 ## 🚀 Features
 
