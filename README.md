@@ -41,8 +41,8 @@ When Meta rejects WhatsApp Business message templates, they often don't provide 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/whatapps-template-validator.git
-cd whatapps-template-validator
+git clone https://github.com/your-username/whatsapp-template-validator.git
+cd whatsapp-template-validator
 ```
 
 2. Install dependencies:
@@ -215,7 +215,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](https://github.com/your-username/whatapps-template-validator/issues) page
+1. Check the [Issues](https://github.com/your-username/whatsapp-template-validator/issues) page
 2. Create a new issue with detailed information
 3. Include template JSON and error messages when applicable
 
